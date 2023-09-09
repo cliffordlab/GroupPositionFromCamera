@@ -9,7 +9,7 @@ Created on Tue Mar 21 12:27:33 2023
 import sys
 sys.path.append('localization')
 from localization.get_pos_ori import get_pos_ori
-from dataset_preparation import PrepareDatasets
+from dataset_preparation import ground_truth_centroids, ground_truth_groups #PrepareDatasets
 from clustering import dbscan_clusters
 from cluster_performance_metrics import cluster_metrics, room_level_testing, metrics_vs_D
 from datetime import datetime
@@ -30,8 +30,8 @@ use_sample_data = True
 #%%%%%%%%%%%%%%%%%%%%%%%%% Load data %%%%%%%%%%%%%%%%%%%%%%#
 
 #### Obtain ground truth ####
-gt_groups = datasets.Nov2022()[1]
-gt = datasets.Nov2022_clusters()
+gt_groups = ground_truth_groups()[1]
+gt = ground_truth_centroids()
 gt_timestamps = gt[0]
 gt_centroids = gt[1]
     
@@ -118,21 +118,21 @@ for g, c, t in zip(gt_groups, gt_centroids, gt_timestamps):
         gt_groups_common.append(g)
         gt_centroids_common.append(c)
         
-# # Remove dbscan centroids with no people around
-# dbscan_centroids_clean = []
-# for i in range(len(dbscan_centroids)):
-#     pos = positions_common[i]
-#     cent = dbscan_centroids[i]
-#     clean_cent = []
-#     for j in range(len(cent)):
-#         num_neighbors = 0
-#         for k in range(len(pos)):
-#             d = np.sqrt((pos[k][0]-cent[j][0])**2 + (pos[k][1]-cent[j][1])**2)
-#             if d <= 35:
-#                 num_neighbors += 1
-#         if num_neighbors > 0:
-#             clean_cent.append(cent[j])
-#     dbscan_centroids_clean.append(clean_cent)
+# Remove dbscan centroids with no people around
+dbscan_centroids_clean = []
+for i in range(len(dbscan_centroids)):
+    pos = positions_common[i]
+    cent = dbscan_centroids[i]
+    clean_cent = []
+    for j in range(len(cent)):
+        num_neighbors = 0
+        for k in range(len(pos)):
+            d = np.sqrt((pos[k][0]-cent[j][0])**2 + (pos[k][1]-cent[j][1])**2)
+            if d <= 35:
+                num_neighbors += 1
+        if num_neighbors > 0:
+            clean_cent.append(cent[j])
+    dbscan_centroids_clean.append(clean_cent)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Results %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#   
 TPR, precision, recall, F1, MAE = cluster_metrics(detected_centroids=dbscan_centroids_clean[3::], 
