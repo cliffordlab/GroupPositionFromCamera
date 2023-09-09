@@ -9,7 +9,7 @@ Created on Tue Mar 21 12:27:33 2023
 import sys
 sys.path.append('localization')
 from localization.get_pos_ori import get_pos_ori
-from dataset_preparation import ground_truth_centroids, ground_truth_groups #PrepareDatasets
+from dataset_preparation import ground_truth_centroids, ground_truth_groups 
 from clustering import dbscan_clusters
 from cluster_performance_metrics import cluster_metrics, room_level_testing, metrics_vs_D
 from datetime import datetime
@@ -22,7 +22,6 @@ import math
 
 
 floorplan_path = 'ep6_floorplan_measured_half_gridded_1_meter.jpg' # Load floorplan image
-datasets = PrepareDatasets() 
     
 # If you have access to raw data from camera systems, set use_sample_data=False
 # if not, use sample data provided by setting use_sample_data=True
